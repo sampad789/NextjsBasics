@@ -16,7 +16,7 @@ const product = ({ product }) => {
   );
 };
 
-export const getServerSideProps = async (context) => {
+export const getStaticProps = async (context) => {
   const res = await fetch(
     `https://fakestoreapi.com/products/${context.params.id}`
   );
@@ -24,6 +24,19 @@ export const getServerSideProps = async (context) => {
 
   return {
     props: { product },
+  };
+};
+
+export const getStaticPaths = async () => {
+  const res = await fetch(`https://fakestoreapi.com/products`);
+  const products = await res.json();
+
+  // Format the ids as a  string for the slug
+  const ids = products.map((product) => product.id);
+  const paths = ids.map((id) => ({ params: { id: id.toString() } }));
+  return {
+    paths,
+    fallback: false,
   };
 };
 
